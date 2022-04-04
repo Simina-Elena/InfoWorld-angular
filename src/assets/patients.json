@@ -1,0 +1,20 @@
+[
+  {
+    "firstName": "John",
+    "lastName": "Doe",
+    "birthdate": "02.02.1999",
+    "gender": "M",
+    "CNP": 19902020202022020,
+    "phoneNumber": "0734567890",
+    "orderNumber": 1
+  },
+  {
+    "firstName": "Jenny",
+    "lastName": "Doe",
+    "birthdate": "02.02.1997",
+    "gender": "F",
+    "CNP": 29702020202022020,
+    "phoneNumber": "0722567890",
+    "orderNumber": 2
+  }
+]
