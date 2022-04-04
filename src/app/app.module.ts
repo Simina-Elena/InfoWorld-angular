@@ -11,12 +11,15 @@ import { HttpClientModule} from "@angular/common/http";
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {environment} from "../environments/environment";
+import { AddPatientComponent } from './add-patient/add-patient.component';
+import {ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DisplayPatientsComponent
+    DisplayPatientsComponent,
+    AddPatientComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +29,7 @@ import {environment} from "../environments/environment";
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

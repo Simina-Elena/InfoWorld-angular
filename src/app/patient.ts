@@ -1,14 +1,14 @@
-export interface Patient {
-  firstName: string,
-  lastName: string,
-  birthdate: string,
-  gender: gender,
-  CNP: number,
-  phoneNumber: string,
-  orderNumber: number
+export class Patient {
+  firstName: string | undefined
+  lastName: string | undefined
+  birthdate: string | undefined
+  gender: gender | undefined
+  CNP?: string
+  phoneNumber?: string
+  orderNumber?: number
 }
 
-enum gender{
+export enum gender{
   M = 'Male',
   F = 'Female'
 }

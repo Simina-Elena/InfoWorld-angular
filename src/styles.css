@@ -57,3 +57,7 @@ nav a.active {
   color: #039be5;
 }
 
+mat-form-field {
+  width: 250px !important;
+}
+
