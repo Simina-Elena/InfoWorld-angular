@@ -14,13 +14,15 @@ import {environment} from "../environments/environment";
 import { AddPatientComponent } from './add-patient/add-patient.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {MAT_DATE_LOCALE} from "@angular/material/core";
+import { DeletePatientComponent } from './delete-patient/delete-patient.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     DisplayPatientsComponent,
-    AddPatientComponent
+    AddPatientComponent,
+    DeletePatientComponent
   ],
   imports: [
     BrowserModule,

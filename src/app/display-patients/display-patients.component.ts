@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {DataService} from "../services/data.service";
-import {SnapshotAction} from "@angular/fire/compat/database";
 import {Patient} from "../patient";
 import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
 import {AddPatientComponent} from "../add-patient/add-patient.component";
 import {DatePipe} from "@angular/common";
-import {logEvent} from "@angular/fire/analytics";
 import {map} from "rxjs";
+import {DeletePatientComponent} from "../delete-patient/delete-patient.component";
 
 @Component({
   selector: 'app-display-patients',
@@ -25,48 +24,64 @@ export class DisplayPatientsComponent implements OnInit {
   openDialogToAdd() {
     const dialogConfig = new MatDialogConfig();
 
-    // dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
 
-    this.openAddPatientDialog(dialogConfig);
+    this.handleAddPatient(dialogConfig);
   }
 
   openDialogToEdit(patient: Patient) {
     const dialogConfig = new MatDialogConfig();
-    console.log(patient)
 
-    // dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
 
-    this.openEditPatientDialog(dialogConfig, patient);
+    this.handleUpdatePatient(dialogConfig, patient);
+  }
+
+  openDialogToDelete(patient: Patient) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = false;
+
+    this.dialog.open(DeletePatientComponent, dialogConfig);
+    const dialogRef = this.dialog.open(DeletePatientComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        this.deletePatient(patient)
+        this.dialog.closeAll();
+      }
+      this.dialog.closeAll();
+    })
   }
 
   ngOnInit() {
     this.getPatientsInformation()
   }
 
-  openAddPatientDialog(dialogConfig: MatDialogConfig) {
+  handleAddPatient(dialogConfig: MatDialogConfig) {
     this.dialog.open(AddPatientComponent, dialogConfig);
 
     const dialogRef = this.dialog.open(AddPatientComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       data => {
-        console.log("Dialog output: ", data);
-        const datePipe: DatePipe = new DatePipe('en-US')
-        const patient = {
-          CNP: data.CNP,
-          phoneNumber: data.phoneNumber,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          gender: data.gender,
-          birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
-          orderNumber: this.getOrderNumber() + 1
+        if(data) {
+          const datePipe: DatePipe = new DatePipe('en-US')
+          const patient = {
+            CNP: data.CNP,
+            phoneNumber: data.phoneNumber,
+            firstName: this.capitalizeFirstLetter(data.firstName),
+            lastName: this.capitalizeFirstLetter(data.lastName),
+            gender: data.gender,
+            birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
+            orderNumber: this.getOrderNumber() + 1
+          }
+          this.addPatientInformation(patient);
+          this.dialog.closeAll();
         }
-        this.addPatientInformation(patient)
+        this.dialog.closeAll();
       })
   }
 
-  openEditPatientDialog(dialogConfig: MatDialogConfig, patient: Patient) {
+  handleUpdatePatient(dialogConfig: MatDialogConfig, patient: Patient) {
     dialogConfig.data = {
       firstName: patient.firstName,
       lastName: patient.lastName,
@@ -81,19 +96,22 @@ export class DisplayPatientsComponent implements OnInit {
     const dialogRef = this.dialog.open(AddPatientComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       data => {
-        console.log("Dialog output: ", data);
-        const datePipe: DatePipe = new DatePipe('en-US')
-        const updatedPatient = {
-          key: patient.key,
-          CNP: data.CNP,
-          phoneNumber: data.phoneNumber,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          gender: data.gender,
-          birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
-          orderNumber: patient.orderNumber
+        if(data) {
+          const datePipe: DatePipe = new DatePipe('en-US')
+          const updatedPatient = {
+            key: patient.key,
+            CNP: data.CNP,
+            phoneNumber: data.phoneNumber,
+            firstName: this.capitalizeFirstLetter(data.firstName),
+            lastName: this.capitalizeFirstLetter(data.lastName),
+            gender: data.gender,
+            birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
+            orderNumber: patient.orderNumber
+          }
+          this.updatePatient(updatedPatient);
+          this.dialog.closeAll();
         }
-        this.updatePatient(updatedPatient)
+        this.dialog.closeAll();
       })
   }
 
@@ -103,7 +121,7 @@ export class DisplayPatientsComponent implements OnInit {
       .snapshotChanges().pipe(
       map(changes =>
         changes.map(c =>
-          ({ key: c.payload.key, ...c.payload.val() })
+          ({key: c.payload.key, ...c.payload.val()})
         )
       )
     ).subscribe(data => {
@@ -112,7 +130,6 @@ export class DisplayPatientsComponent implements OnInit {
   }
 
   getOrderNumber() {
-    console.log(this.dataSource.data.length)
     if (this.dataSource.data.length > 0) {
       return this.dataSource.data[this.dataSource.data.length - 1].orderNumber
     }
@@ -125,9 +142,21 @@ export class DisplayPatientsComponent implements OnInit {
       .catch(err => console.log(err));
   }
 
-  updatePatient(element: any) {
-    this.dataService.updatePatient(element.key, element)
+  updatePatient(patient: any) {
+    this.dataService.updatePatient(patient.key, patient)
       .then(() => console.log('Patient updated successfully!'))
       .catch(err => console.log(err));
+  }
+
+  deletePatient(patient: any) {
+    if (patient.key) {
+      this.dataService.deletePatient(patient.key)
+        .then(() => console.log('Patient deleted successfully!'))
+        .catch(err => console.log(err));
+    }
+  }
+
+  capitalizeFirstLetter(string: string) {
+    return string[0].toUpperCase() + string.slice(1);
   }
 }

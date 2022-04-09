@@ -1,9 +1,8 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
-import {gender, Patient} from "../patient";
+import {gender} from "../patient";
 import {BirthdateValidators} from "../common/validators/birthdate.validators";
 import {DataService} from "../services/data.service";
-import {MatTableDataSource} from "@angular/material/table";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
