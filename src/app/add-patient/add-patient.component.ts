@@ -26,7 +26,6 @@ export class AddPatientComponent implements OnInit {
               private dialogRef: MatDialogRef<AddPatientComponent>,
               @Inject(MAT_DIALOG_DATA) data : any) {
     this.selectFieldOptions = Object.keys(gender)
-    console.log(data)
     if(data !== null) {
       this.firstNameField = data.firstName;
       this.lastNameField = data.lastName;

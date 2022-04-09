@@ -4,4 +4,10 @@ form {
   align-items: center;
 }
 
+ul {
+  list-style-type: none;
+}
 
+#close-button {
+  margin-right: 5px;
+}

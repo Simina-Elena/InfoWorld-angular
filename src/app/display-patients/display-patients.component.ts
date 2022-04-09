@@ -25,6 +25,7 @@ export class DisplayPatientsComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = false;
+    dialogConfig.width = '25rem'
 
     this.handleAddPatient(dialogConfig);
   }
