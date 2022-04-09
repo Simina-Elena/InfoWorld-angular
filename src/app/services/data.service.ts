@@ -17,4 +17,12 @@ export class DataService {
   addPatient(patient: Patient) {
     return this.patientsRef.push(patient);
   }
+
+  updatePatient(key: string, value: any): Promise<void> {
+    return this.patientsRef.update(key, value);
+  }
+
+  deletePatient(key: string): Promise<void> {
+    return this.patientsRef.remove(key);
+  }
 }

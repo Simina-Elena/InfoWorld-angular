@@ -1,4 +1,5 @@
 export interface Patient {
+  key: string
   firstName: string
   lastName: string
   birthdate: string

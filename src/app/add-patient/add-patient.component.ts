@@ -15,14 +15,29 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 export class AddPatientComponent implements OnInit {
   selectFieldOptions: any[];
   form: FormGroup;
-  private outputData: Patient;
+  firstNameField: string;
+  lastNameField: string;
+  phoneNumberField: string;
+  genderField: gender;
+  CNPField: string;
+  birthdateField: Date;
+  orderNumberField: number;
 
   constructor(private fb: FormBuilder, private dataService: DataService,
               private dialogRef: MatDialogRef<AddPatientComponent>,
               @Inject(MAT_DIALOG_DATA) data : any) {
     this.selectFieldOptions = Object.keys(gender)
+    console.log(data)
+    if(data !== null) {
+      this.firstNameField = data.firstName;
+      this.lastNameField = data.lastName;
+      this.phoneNumberField = data.phoneNumber;
+      this.genderField = data.gender;
+      this.CNPField = data.CNP;
+      this.birthdateField = new Date(data.birthdate);
+      this.orderNumberField = data.orderNumber;
+    }
   }
-
 
   get firstName() {
     return this.form.get('firstName');
@@ -48,26 +63,18 @@ export class AddPatientComponent implements OnInit {
     return this.form.get('phoneNumber')
   }
 
-  getErrorMessage() {
-    if (this.firstName.hasError('required')) {
-      return 'You must enter a value';
-    }
-
-    return this.firstName.hasError('firstName') ? 'Not a valid name' : '';
-  }
-
   ngOnInit(): void {
     this.form = this.fb.group({
-      firstName: [null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      birthdate: [null, [Validators.required,
+      firstName: [this.firstNameField, [Validators.required]],
+      lastName: [this.lastNameField, [Validators.required]],
+      birthdate: [this.birthdateField, [Validators.required,
         BirthdateValidators.cannotBeBiggerThanCurrentDate]],
-      gender: [null, [Validators.required]],
-      CNP: [null, [Validators.minLength(13),
+      gender: [this.genderField, [Validators.required]],
+      CNP: [this.CNPField, [Validators.minLength(13),
         Validators.maxLength(13),
         Validators.pattern('^[0-9]*$')]],
-      phoneNumber: [null, [Validators.pattern('^[0-9]*$')]],
-      orderNumber: [{value: null, disabled: true}]
+      phoneNumber: [this.phoneNumberField, [Validators.pattern('^[0-9]*$')]],
+      orderNumber: [{value: this.orderNumberField, disabled: true}]
     })
   }
 
