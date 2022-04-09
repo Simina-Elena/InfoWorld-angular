@@ -7,6 +7,7 @@ import {MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog
 import {AddPatientComponent} from "../add-patient/add-patient.component";
 import {DatePipe} from "@angular/common";
 import {logEvent} from "@angular/fire/analytics";
+import {map} from "rxjs";
 
 @Component({
   selector: 'app-display-patients',
@@ -16,7 +17,6 @@ import {logEvent} from "@angular/fire/analytics";
 export class DisplayPatientsComponent implements OnInit {
   public displayedColumns = ['firstName', 'lastName', 'birthdate', 'gender', 'CNP', 'phoneNumber', 'orderNumber', "actions"]
   public dataSource = new MatTableDataSource<Patient>();
-  private patient: Patient;
 
   constructor(private dataService: DataService,
               private dialog: MatDialog) {
@@ -33,6 +33,7 @@ export class DisplayPatientsComponent implements OnInit {
 
   openDialogToEdit(patient: Patient) {
     const dialogConfig = new MatDialogConfig();
+    console.log(patient)
 
     // dialogConfig.disableClose = true;
     dialogConfig.autoFocus = false;
@@ -52,8 +53,7 @@ export class DisplayPatientsComponent implements OnInit {
       data => {
         console.log("Dialog output: ", data);
         const datePipe: DatePipe = new DatePipe('en-US')
-        this.patient = {
-          key: data.key,
+        const patient = {
           CNP: data.CNP,
           phoneNumber: data.phoneNumber,
           firstName: data.firstName,
@@ -62,7 +62,7 @@ export class DisplayPatientsComponent implements OnInit {
           birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
           orderNumber: this.getOrderNumber() + 1
         }
-        this.addPatientInformation(this.patient)
+        this.addPatientInformation(patient)
       })
   }
 
@@ -83,42 +83,51 @@ export class DisplayPatientsComponent implements OnInit {
       data => {
         console.log("Dialog output: ", data);
         const datePipe: DatePipe = new DatePipe('en-US')
-        this.patient = {
-          key: data.key,
+        const updatedPatient = {
+          key: patient.key,
           CNP: data.CNP,
           phoneNumber: data.phoneNumber,
           firstName: data.firstName,
           lastName: data.lastName,
           gender: data.gender,
           birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
-          orderNumber: this.getOrderNumber() + 1
+          orderNumber: patient.orderNumber
         }
-        this.updatePatient(this.patient)
+        this.updatePatient(updatedPatient)
       })
   }
 
   getPatientsInformation() {
     this.dataService
       .getAll()
-      .valueChanges()
-      .subscribe(data => {
-          this.dataSource.data = data
-          console.log(data)
-        }
+      .snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ key: c.payload.key, ...c.payload.val() })
+        )
       )
-  }
-
-  getOrderNumber() {
-    return this.dataSource.data[this.dataSource.data.length - 1].orderNumber
-  }
-
-  addPatientInformation(data: Patient) {
-    this.dataService.addPatient(data).then((p) => {
-      console.log(p.key)
+    ).subscribe(data => {
+      this.dataSource.data = data;
     });
   }
 
+  getOrderNumber() {
+    console.log(this.dataSource.data.length)
+    if (this.dataSource.data.length > 0) {
+      return this.dataSource.data[this.dataSource.data.length - 1].orderNumber
+    }
+    return 0;
+  }
+
+  addPatientInformation(data: any) {
+    this.dataService.addPatient(data)
+      .then(() => console.log("Patient added successfully!"))
+      .catch(err => console.log(err));
+  }
+
   updatePatient(element: any) {
-    console.log(element.key)
+    this.dataService.updatePatient(element.key, element)
+      .then(() => console.log('Patient updated successfully!'))
+      .catch(err => console.log(err));
   }
 }
