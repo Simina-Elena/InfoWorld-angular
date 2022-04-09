@@ -1,42 +1,50 @@
-<form [formGroup]="form">
+<h2 mat-dialog-title>Add patient</h2>
+
+<mat-dialog-content [formGroup]="form">
   <mat-form-field appearance="fill">
     <mat-label>First name</mat-label>
-    <input matInput id="firstName" type="text" formControlName="firstName">
-    <mat-error *ngIf="firstName.errors['required']">First name is required</mat-error>
+    <input matInput id="firstName" formControlName="firstName">
+    <mat-error *ngIf="firstName.errors?.['required']">{{getErrorMessage()}}</mat-error>
   </mat-form-field>
-<!--  <div *ngIf="firstName.touched" class="alert">First name is required</div>-->
   <mat-form-field appearance="fill">
     <mat-label>Last name</mat-label>
-    <input matInput id="lastName" type="text" formControlName="lastName">
-    <mat-error *ngIf="lastName.errors['required']">Last name is required</mat-error>
+    <input matInput id="lastName" formControlName="lastName">
+    <mat-error *ngIf="lastName.errors?.['required']">Last name is required</mat-error>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Birthdate</mat-label>
     <input matInput [matDatepicker]="picker" formControlName="birthdate" id="birthdate">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker-toggle matSuffix [for]="picker">
+    </mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
-    <mat-error *ngIf="birthdate.errors['invalidDate']">{{birthdate.errors['invalidDate']}}</mat-error>
-    <mat-error *ngIf="birthdate.errors['required']">Birthdate is required</mat-error>
+    <mat-error *ngIf="birthdate.errors?.['invalidDate']">{{birthdate.errors['invalidDate']}}</mat-error>
+    <mat-error *ngIf="birthdate.errors?.['required']">Birthdate is required</mat-error>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Gender</mat-label>
     <mat-select formControlName="gender" id="gender">
-      <mat-option *ngFor="let option of selectFieldOptions" [value]="option.name">{{option}}</mat-option>
+      <mat-option *ngFor="let option of selectFieldOptions" [value]="option">{{option}}</mat-option>
     </mat-select>
-    <mat-error *ngIf="birthdate.errors['required']">Gender is required</mat-error>
+    <mat-error *ngIf="gender.errors?.['required']">Gender is required</mat-error>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>CNP</mat-label>
-    <input matInput type="text" formControlName="CNP" id="CNP">
-    <mat-error *ngIf="CNP.errors">CNP must have 13 characters</mat-error>
+    <input matInput formControlName="CNP" id="CNP">
+    <mat-error *ngIf="CNP.errors">CNP must have only 13 digits</mat-error>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Phone number</mat-label>
-    <input matInput type="text" formControlName="phoneNumber" id="phone-number">
+    <input matInput formControlName="phoneNumber" id="phone-number">
+    <mat-error *ngIf="phoneNumber.errors">Phone number must contain only letters </mat-error>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>Order number</mat-label>
-    <input matInput type="text" formControlName="orderNumber" id="order-number">
+    <input matInput formControlName="orderNumber" id="order-number">
   </mat-form-field>
   <button>Submit</button>
-</form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button class="mat-raised-button" (click)="close()">Close</button>
+  <button class="mat-raised-button mat-primary" (click)="saveDetails()">Save</button>
+</mat-dialog-actions>

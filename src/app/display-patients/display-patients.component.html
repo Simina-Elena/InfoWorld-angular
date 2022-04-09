@@ -1,5 +1,5 @@
 
-<button id="add-patient">Add patient</button>
+<button id="add-patient" mat-raised-button (click)="openDialog()">Add patient</button>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 demo-table">
   <ng-container matColumnDef="firstName">
     <th mat-header-cell *matHeaderCellDef> First Name </th>

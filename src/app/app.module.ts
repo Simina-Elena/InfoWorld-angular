@@ -13,6 +13,7 @@ import {AngularFireDatabaseModule} from "@angular/fire/compat/database";
 import {environment} from "../environments/environment";
 import { AddPatientComponent } from './add-patient/add-patient.component';
 import {ReactiveFormsModule} from "@angular/forms";
+import {MAT_DATE_LOCALE} from "@angular/material/core";
 
 
 @NgModule({
@@ -31,7 +32,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     AngularFireDatabaseModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
