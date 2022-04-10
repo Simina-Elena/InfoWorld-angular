@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add patient</h2>
+<h2 mat-dialog-title>{{title}}</h2>
 
 <mat-dialog-content [formGroup]="form">
   <ul>
@@ -47,7 +47,7 @@
       <mat-form-field appearance="fill">
         <mat-label>Phone number</mat-label>
         <input matInput formControlName="phoneNumber" id="phone-number">
-        <mat-error *ngIf="phoneNumber.errors">Phone number must contain only letters</mat-error>
+        <mat-error *ngIf="phoneNumber.errors">Phone number must contain only digits</mat-error>
       </mat-form-field>
     </li>
     <li>
@@ -61,5 +61,5 @@
 
 <mat-dialog-actions>
   <button id="close-button" class="mat-raised-button" (click)="close()">Close</button>
-  <button class="mat-raised-button mat-accent hover-class"  (click)="saveDetails()">Save</button>
+  <button class="mat-raised-button mat-accent hover-class" (click)="saveDetails()">Save</button>
 </mat-dialog-actions>

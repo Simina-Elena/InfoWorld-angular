@@ -7,6 +7,7 @@ import {AddPatientComponent} from "../add-patient/add-patient.component";
 import {DatePipe} from "@angular/common";
 import {map} from "rxjs";
 import {DeletePatientComponent} from "../delete-patient/delete-patient.component";
+import {capitalizeFirstLetter} from "../common/utils/utility-functions";
 
 @Component({
   selector: 'app-display-patients',
@@ -25,42 +26,11 @@ export class DisplayPatientsComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.autoFocus = false;
-    dialogConfig.width = '25rem'
+    dialogConfig.width = '25rem';
 
-    this.handleAddPatient(dialogConfig);
-  }
-
-  openDialogToEdit(patient: Patient) {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.autoFocus = false;
-
-    this.handleUpdatePatient(dialogConfig, patient);
-  }
-
-  openDialogToDelete(patient: Patient) {
-    const dialogConfig = new MatDialogConfig();
-
-    dialogConfig.autoFocus = false;
-
-    this.dialog.open(DeletePatientComponent, dialogConfig);
-    const dialogRef = this.dialog.open(DeletePatientComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((data) => {
-      if (data) {
-        this.deletePatient(patient)
-        this.dialog.closeAll();
-      }
-      this.dialog.closeAll();
-    })
-  }
-
-  ngOnInit() {
-    this.getPatientsInformation()
-  }
-
-  handleAddPatient(dialogConfig: MatDialogConfig) {
-    this.dialog.open(AddPatientComponent, dialogConfig);
-
+    dialogConfig.data = {
+      title: 'Add patient'
+    }
     const dialogRef = this.dialog.open(AddPatientComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       data => {
@@ -69,8 +39,8 @@ export class DisplayPatientsComponent implements OnInit {
           const patient = {
             CNP: data.CNP,
             phoneNumber: data.phoneNumber,
-            firstName: this.capitalizeFirstLetter(data.firstName),
-            lastName: this.capitalizeFirstLetter(data.lastName),
+            firstName: capitalizeFirstLetter(data.firstName),
+            lastName: capitalizeFirstLetter(data.lastName),
             gender: data.gender,
             birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
             orderNumber: this.getOrderNumber() + 1
@@ -82,7 +52,12 @@ export class DisplayPatientsComponent implements OnInit {
       })
   }
 
-  handleUpdatePatient(dialogConfig: MatDialogConfig, patient: Patient) {
+  openDialogToEdit(patient: Patient) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = false;
+    dialogConfig.width = '25rem';
+
     dialogConfig.data = {
       firstName: patient.firstName,
       lastName: patient.lastName,
@@ -90,10 +65,9 @@ export class DisplayPatientsComponent implements OnInit {
       birthdate: patient.birthdate,
       gender: patient.gender,
       CNP: patient.CNP,
-      orderNumber: patient.orderNumber
+      orderNumber: patient.orderNumber,
+      title: 'Update patient'
     }
-    this.dialog.open(AddPatientComponent, dialogConfig);
-
     const dialogRef = this.dialog.open(AddPatientComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       data => {
@@ -103,8 +77,8 @@ export class DisplayPatientsComponent implements OnInit {
             key: patient.key,
             CNP: data.CNP,
             phoneNumber: data.phoneNumber,
-            firstName: this.capitalizeFirstLetter(data.firstName),
-            lastName: this.capitalizeFirstLetter(data.lastName),
+            firstName: capitalizeFirstLetter(data.firstName),
+            lastName: capitalizeFirstLetter(data.lastName),
             gender: data.gender,
             birthdate: datePipe.transform(data.birthdate, 'dd-MMM-YYYY'),
             orderNumber: patient.orderNumber
@@ -114,6 +88,25 @@ export class DisplayPatientsComponent implements OnInit {
         }
         this.dialog.closeAll();
       })
+  }
+
+  openDialogToDelete(patient: Patient) {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.autoFocus = false;
+
+    const dialogRef = this.dialog.open(DeletePatientComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        this.deletePatient(patient);
+        this.dialog.closeAll();
+      }
+      this.dialog.closeAll();
+    })
+  }
+
+  ngOnInit() {
+    this.getPatientsInformation();
   }
 
   getPatientsInformation() {
@@ -132,7 +125,7 @@ export class DisplayPatientsComponent implements OnInit {
 
   getOrderNumber() {
     if (this.dataSource.data.length > 0) {
-      return this.dataSource.data[this.dataSource.data.length - 1].orderNumber
+      return this.dataSource.data[this.dataSource.data.length - 1].orderNumber;
     }
     return 0;
   }
@@ -157,7 +150,5 @@ export class DisplayPatientsComponent implements OnInit {
     }
   }
 
-  capitalizeFirstLetter(string: string) {
-    return string[0].toUpperCase() + string.slice(1);
-  }
+
 }

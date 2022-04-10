@@ -21,12 +21,13 @@ export class AddPatientComponent implements OnInit {
   CNPField: string;
   birthdateField: Date;
   orderNumberField: number;
+  title: string;
 
   constructor(private fb: FormBuilder, private dataService: DataService,
               private dialogRef: MatDialogRef<AddPatientComponent>,
               @Inject(MAT_DIALOG_DATA) data : any) {
     this.selectFieldOptions = Object.keys(gender)
-    if(data !== null) {
+    if(Object.keys(data).length > 1) {
       this.firstNameField = data.firstName;
       this.lastNameField = data.lastName;
       this.phoneNumberField = data.phoneNumber;
@@ -34,6 +35,9 @@ export class AddPatientComponent implements OnInit {
       this.CNPField = data.CNP;
       this.birthdateField = new Date(data.birthdate);
       this.orderNumberField = data.orderNumber;
+      this.title = data.title;
+    } else {
+      this.title = data.title;
     }
   }
 
@@ -77,7 +81,11 @@ export class AddPatientComponent implements OnInit {
   }
 
   saveDetails() {
-    this.dialogRef.close(this.form.value);
+    if(!this.form.valid){
+      console.log("Invalid fields!")
+    } else {
+      this.dialogRef.close(this.form.value);
+    }
   }
 
   close() {

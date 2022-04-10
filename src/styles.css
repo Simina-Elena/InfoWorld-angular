@@ -17,40 +17,12 @@ body, input[text], button {
   color: #888;
 }
 
-a {
-  cursor: pointer;
-  cursor: hand;
-}
-
-button {
-  background-color: #eee;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  cursor: hand;
-}
-
 button:hover {
   background-color: #aaa;
 }
 
-button:disabled {
-  background-color: #eee;
-  color: #aaa;
-  cursor: auto;
-}
-
-/* Navigation link styles */
-nav a {
-  text-decoration: none;
-  margin-top: 10px;
-  background-color: #eee;
-  border-radius: 4px;
-}
-
 nav a:visited, a:link {
-  color: #607D8B;
+  color: #336699;
 }
 
 nav a:hover {
